@@ -1,0 +1,202 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Content House Dashboard</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f1f5f9;color:#172033}
+header{background:#10213e;color:white;padding:22px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+header p{color:#bdcce5;font-size:13px;margin-top:6px}
+main{padding:28px 5%}
+.top{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:22px}
+.top p{color:#68758a;margin-top:6px}
+button{background:#2563eb;color:white;border:0;padding:10px 14px;border-radius:7px;cursor:pointer}
+button:hover{opacity:.85}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-bottom:24px}
+.card,.panel{background:white;border-radius:12px;padding:20px;box-shadow:0 3px 12px #1720330b}
+.card p{color:#68758a;font-size:14px}
+.card h2{margin-top:12px;font-size:28px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.secondary{background:#e5edff;color:#1d4ed8}
+input,select{padding:9px;border:1px solid #d7deea;border-radius:6px;max-width:100%}
+.table-wrap{overflow-x:auto}
+table{width:100%;min-width:760px;border-collapse:collapse}
+th,td{text-align:left;padding:12px 9px;border-bottom:1px solid #e9edf4;font-size:13px}
+th{background:#f8faff;color:#68758a}
+td input{width:130px}
+td select{width:125px}
+footer{text-align:center;padding:24px;color:#68758a;font-size:13px}
+@media(max-width:800px){.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:450px){main{padding:20px 4%}.card{padding:12px}.card h2{font-size:23px}}
+</style>
+</head>
+
+<body>
+<header>
+  <div>
+    <h2>THE CONTENT HOUSE</h2>
+    <p>Digital Marketing & Social Media Managing</p>
+  </div>
+  <span id="today"></span>
+</header>
+
+<main>
+  <section class="top">
+    <div>
+      <h2>Employee Dashboard</h2>
+      <p>Manage your employees, tasks and attendance.</p>
+    </div>
+    <button id="addEmployee">+ Add Employee</button>
+  </section>
+
+  <section class="stats">
+    <div class="card"><p>Total Employees</p><h2 id="total">5</h2></div>
+    <div class="card"><p>Completed Tasks</p><h2 id="completed">0</h2></div>
+    <div class="card"><p>In Progress</p><h2 id="progress">0</h2></div>
+    <div class="card"><p>Pending Tasks</p><h2 id="pending">5</h2></div>
+  </section>
+
+  <section class="panel">
+    <h3>Team Management</h3>
+    <div class="actions">
+      <input id="search" placeholder="Search employees...">
+      <button class="secondary" id="assignTask">+ Assign Task</button>
+      <button class="secondary" id="export">Export CSV</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Employee</th><th>Role</th><th>Today's Task</th>
+            <th>Status</th><th>Attendance</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="employees"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer>© 2026 The Content House | Employee Management System</footer>
+
+<script>
+const team=[
+{name:"Suvash BK",role:"Content Creator",task:"Create social media content",status:"Pending",attendance:"Not Marked"},
+{name:"Sundar Kafle",role:"Video Editor",task:"Edit client Reels",status:"Pending",attendance:"Not Marked"},
+{name:"Aapradhi Kanor",role:"Social Media Manager",task:"Plan social media posts",status:"Pending",attendance:"Not Marked"},
+{name:"Gentrang Gurung",role:"Videographer",task:"Shoot client videos",status:"Pending",attendance:"Not Marked"},
+{name:"Employee 05",role:"Team Member",task:"Assign a task",status:"Pending",attendance:"Not Marked"}
+];
+
+const $=id=>document.getElementById(id);
+$("today").textContent=new Date().toLocaleDateString("en-NP",{day:"numeric",month:"short",year:"numeric"});
+
+function cell(row,element){
+  const td=document.createElement("td");
+  td.appendChild(element);
+  row.appendChild(td);
+}
+
+function input(value,label,update){
+  const el=document.createElement("input");
+  el.value=value;
+  el.setAttribute("aria-label",label);
+  el.addEventListener("change",()=>{
+    update(el.value);
+    render();
+  });
+  return el;
+}
+
+function select(options,value,label,update){
+  const el=document.createElement("select");
+  el.setAttribute("aria-label",label);
+  options.forEach(option=>{
+    const opt=document.createElement("option");
+    opt.value=option;
+    opt.textContent=option;
+    opt.selected=option===value;
+    el.appendChild(opt);
+  });
+  el.addEventListener("change",()=>{
+    update(el.value);
+    render();
+  });
+  return el;
+}
+
+function render(){
+  const query=$("search").value.toLowerCase();
+  $("employees").replaceChildren();
+
+  team.forEach((e,i)=>{
+    if(!(e.name+" "+e.role+" "+e.task).toLowerCase().includes(query))return;
+
+    const tr=document.createElement("tr");
+    cell(tr,input(e.name,"Employee name",v=>e.name=v));
+    cell(tr,input(e.role,"Employee role",v=>e.role=v));
+    cell(tr,input(e.task,"Task",v=>e.task=v));
+    cell(tr,select(["Pending","In Progress","Completed"],e.status,"Task status",v=>e.status=v));
+    cell(tr,select(["Not Marked","Present","Absent","Leave"],e.attendance,"Attendance",v=>e.attendance=v));
+
+    const btn=document.createElement("button");
+    btn.textContent="Remove";
+    btn.onclick=()=>{
+      if(confirm("Remove "+e.name+"?")){
+        team.splice(i,1);
+        render();
+      }
+    };
+    cell(tr,btn);
+    $("employees").appendChild(tr);
+  });
+
+  $("total").textContent=team.length;
+  $("completed").textContent=team.filter(e=>e.status==="Completed").length;
+  $("progress").textContent=team.filter(e=>e.status==="In Progress").length;
+  $("pending").textContent=team.filter(e=>e.status==="Pending").length;
+}
+
+$("addEmployee").onclick=()=>{
+  const name=prompt("Enter employee name:");
+  if(!name||!name.trim())return;
+  team.push({name:name.trim(),role:"Team Member",task:"Assign a task",status:"Pending",attendance:"Not Marked"});
+  render();
+};
+
+$("assignTask").onclick=()=>{
+  if(!team.length){alert("Add an employee first.");return;}
+  const task=prompt("Enter task description:");
+  if(!task||!task.trim())return;
+  const answer=prompt(team.map((e,i)=>(i+1)+". "+e.name).join("\n")+"\nEnter employee number:");
+  if(answer===null||answer.trim()==="")return;
+  const i=Number(answer)-1;
+  if(!Number.isInteger(i)||i<0||i>=team.length){alert("Invalid employee number.");return;}
+  team[i].task=task.trim();
+  team[i].status="Pending";
+  render();
+};
+
+$("search").addEventListener("input",render);
+
+$("export").onclick=()=>{
+  const rows=[["Employee","Role","Task","Status","Attendance"],
+    ...team.map(e=>[e.name,e.role,e.task,e.status,e.attendance])];
+  const csv="\uFEFF"+rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\r\n");
+  const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8;"}));
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="content-house-employees.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+render();
+</script>
+</body>
+</html>
