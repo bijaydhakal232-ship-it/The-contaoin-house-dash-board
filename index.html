@@ -4,473 +4,662 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Content House Dashboard</title>
+<title>The Content House | CEO Dashboard</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,sans-serif;background:#f1f5f9;color:#172033}
-header{background:#10213e;color:white;padding:22px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-header p{color:#bdcce5;font-size:13px;margin-top:6px}
-main{padding:28px 5%}
-.top{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:22px}
-.top p{color:#68758a;margin-top:6px}
-button{background:#2563eb;color:white;border:0;padding:10px 14px;border-radius:7px;cursor:pointer}
-button:hover{opacity:.85}
-button:disabled{opacity:.6;cursor:wait}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-bottom:24px}
-.card,.panel{background:white;border-radius:12px;padding:20px;box-shadow:0 3px 12px #1720330b}
-.card p{color:#68758a;font-size:14px}
-.card h2{margin-top:12px;font-size:28px}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
-.secondary{background:#e5edff;color:#1d4ed8}
-.save-image{background:#15803d;color:white}
-input,select{padding:9px;border:1px solid #d7deea;border-radius:6px;max-width:100%}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--blue:#2563eb;--dark:#14213d;--bg:#f1f5f9;--white:#fff;--muted:#64748b}
+body{font-family:Arial,sans-serif;background:var(--bg);color:#17233c}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer;border:0;border-radius:7px;padding:10px 14px;background:var(--blue);color:white}
+button:hover{opacity:.88}
+.app{display:flex;min-height:100vh}
+.sidebar{width:240px;background:var(--dark);color:white;padding:24px 16px;flex-shrink:0}
+.logo{font-size:22px;font-weight:bold;margin-bottom:5px}
+.logo span{color:#60a5fa}
+.tagline{font-size:11px;color:#a9b8d0;margin-bottom:30px}
+.nav-btn{width:100%;text-align:left;background:transparent;color:#dbeafe;margin:4px 0;padding:13px}
+.nav-btn:hover,.nav-btn.active{background:#263957;color:white}
+.main{flex:1;min-width:0}
+.topbar{background:white;padding:17px 25px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #e2e8f0}
+.topbar h2{font-size:21px}
+.topbar small{color:var(--muted)}
+.content{padding:25px;max-width:1500px;margin:auto}
+.page{display:none}
+.page.active{display:block}
+.page-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.page-heading p{color:var(--muted);font-size:13px;margin-top:5px}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:22px}
+.stat,.panel{background:white;border-radius:12px;padding:20px;box-shadow:0 2px 8px #17233c0b}
+.stat small{color:var(--muted)}
+.stat h2{font-size:26px;margin:12px 0 5px}
+.stat p{font-size:12px;color:var(--muted)}
+.panel{margin-bottom:20px;overflow:hidden}
+.panel h3{margin-bottom:16px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:12px;font-weight:bold;color:#475569}
+input,select,textarea{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:7px;background:white;color:#17233c;min-width:0}
+textarea{resize:vertical;min-height:42px}
+.form-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-secondary{background:#64748b}
+.btn-danger{background:#dc2626}
+.btn-green{background:#059669}
 .table-wrap{overflow-x:auto}
-table{width:100%;min-width:760px;border-collapse:collapse}
-th,td{text-align:left;padding:12px 9px;border-bottom:1px solid #e9edf4;font-size:13px}
-th{background:#f8faff;color:#68758a}
-td input{width:130px}
-td select{width:125px}
-#historyMessage{margin:10px 0;color:#2563eb;font-size:14px}
-footer{text-align:center;padding:24px;color:#68758a;font-size:13px}
-@media(max-width:800px){.stats{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:450px){main{padding:20px 4%}.card{padding:12px}.card h2{font-size:23px}}
+table{border-collapse:collapse;width:100%;font-size:13px;min-width:600px}
+th,td{text-align:left;padding:12px;border-bottom:1px solid #e2e8f0;vertical-align:middle}
+th{background:#f8fafc;color:#475569}
+td button{padding:6px 9px;font-size:11px;margin:2px}
+.badge{display:inline-block;padding:5px 8px;border-radius:20px;font-size:11px;background:#dbeafe;color:#1d4ed8}
+.badge.done{background:#dcfce7;color:#166534}
+.badge.pending{background:#fef3c7;color:#92400e}
+.empty{text-align:center;padding:24px;color:#94a3b8}
+.progress{height:8px;background:#e2e8f0;border-radius:8px;overflow:hidden;margin:12px 0}
+.progress div{height:100%;background:var(--blue);width:0}
+.record-date{max-width:220px}
+.footer{text-align:center;padding:20px;color:#94a3b8;font-size:12px}
+@media(max-width:1000px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.sidebar{width:205px}.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.app{display:block}.sidebar{width:100%;padding:15px}.logo{font-size:20px}.tagline{margin-bottom:12px}.nav-list{display:flex;overflow-x:auto;gap:5px}.nav-btn{width:auto;white-space:nowrap;margin:0;padding:10px;font-size:12px}.topbar{padding:15px}.content{padding:14px}.cards{gap:9px}.stat{padding:14px}.stat h2{font-size:21px}.two-col{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:390px){.cards{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}}
 </style>
 </head>
 
 <body>
-<div id="dashboard">
+<div class="app">
 
-<header>
-  <div>
-    <h2>THE CONTENT HOUSE</h2>
-    <p>Digital Marketing & Social Media Managing</p>
+<aside class="sidebar">
+  <div class="logo">THE <span>CONTENT</span> HOUSE</div>
+  <div class="tagline">CEO MANAGEMENT SYSTEM</div>
+  <div class="nav-list">
+    <button class="nav-btn active" data-page="overview">▦ Overview</button>
+    <button class="nav-btn" data-page="clients">♙ Clients & Projects</button>
+    <button class="nav-btn" data-page="team">♧ Team Management</button>
+    <button class="nav-btn" data-page="finance">₹ Finance</button>
+    <button class="nav-btn" data-page="planner">☑ CEO Planner</button>
+    <button class="nav-btn" data-page="records">▤ Daily Records</button>
   </div>
-  <span id="today"></span>
-</header>
+</aside>
 
-<main>
-  <section class="top">
+<main class="main">
+  <header class="topbar">
     <div>
-      <h2>Employee Dashboard</h2>
-      <p>Manage employees, daily tasks and attendance.</p>
+      <h2 id="pageTitle">CEO Dashboard</h2>
+      <small id="todayText"></small>
     </div>
-    <button id="addEmployee">+ Add Employee</button>
-  </section>
+    <button class="btn-secondary" onclick="exportData()">Export Data</button>
+  </header>
 
-  <section class="stats">
-    <div class="card"><p>Total Employees</p><h2 id="total">0</h2></div>
-    <div class="card"><p>Completed Tasks</p><h2 id="completed">0</h2></div>
-    <div class="card"><p>In Progress</p><h2 id="progress">0</h2></div>
-    <div class="card"><p>Pending Tasks</p><h2 id="pending">0</h2></div>
-  </section>
+  <div class="content">
 
-  <section class="panel">
-    <h3>Team Management</h3>
+    <!-- OVERVIEW -->
+    <section class="page active" id="overview">
+      <div class="page-heading">
+        <div><h2>Welcome, MR Bijay Dhakal👋</h2><p>Manage your business from one place.</p></div>
+        <button onclick="showPage('records')">+ Add Daily Record</button>
+      </div>
 
-    <div class="actions">
-      <label for="historyDate">Select Date:</label>
-      <input type="date" id="historyDate">
-      <button id="todayButton" class="secondary">Today</button>
-      <input id="search" placeholder="Search employees...">
-      <button class="secondary" id="assignTask">+ Assign Task</button>
-      <button class="secondary" id="export">Export CSV</button>
-      <button class="save-image" id="saveImage">Save as Image</button>
-    </div>
+      <div class="cards">
+        <div class="stat"><small>Total Clients</small><h2 id="totalClients">0</h2><p>All registered clients</p></div>
+        <div class="stat"><small>Team Members</small><h2 id="totalTeam">0</h2><p>Employees registered</p></div>
+        <div class="stat"><small>Total Income</small><h2 id="totalIncome">Rs. 0</h2><p>Recorded income</p></div>
+        <div class="stat"><small>Net Balance</small><h2 id="netBalance">Rs. 0</h2><p>Income minus expenses</p></div>
+      </div>
 
-    <p id="historyMessage"></p>
+      <div class="two-col">
+        <div class="panel">
+          <h3>Business Summary</h3>
+          <p>Projects in progress: <strong id="activeProjects">0</strong></p>
+          <div class="progress"><div id="projectProgress"></div></div>
+          <p style="color:#64748b;font-size:12px">Completed projects: <span id="completedProjects">0</span></p>
+          <hr style="border:0;border-top:1px solid #e2e8f0;margin:18px 0">
+          <p>Tasks pending: <strong id="pendingTasks">0</strong></p>
+          <p style="margin-top:10px">Tasks completed: <strong id="doneTasks">0</strong></p>
+        </div>
+        <div class="panel">
+          <h3>Quick Actions</h3>
+          <div style="display:grid;gap:10px">
+            <button onclick="showPage('clients')">+ Add Client / Project</button>
+            <button onclick="showPage('team')">+ Manage Employees</button>
+            <button onclick="showPage('finance')">+ Record Income / Expense</button>
+            <button onclick="showPage('planner')">+ Add CEO Goal</button>
+          </div>
+        </div>
+      </div>
 
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Employee</th>
-            <th>Role</th>
-            <th>Today's Task</th>
-            <th>Status</th>
-            <th>Attendance</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="employees"></tbody>
-      </table>
-    </div>
-  </section>
+      <div class="panel">
+        <h3>Recent Daily Records</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Date</th><th>Activity</th><th>Notes</th></tr></thead>
+          <tbody id="recentRecords"></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- CLIENTS -->
+    <section class="page" id="clients">
+      <div class="page-heading"><div><h2>Clients & Projects</h2><p>Track client details, services, payments and progress.</p></div></div>
+      <div class="panel">
+        <h3>Add Client / Project</h3>
+        <form id="clientForm">
+          <div class="form-grid">
+            <div class="field"><label>Client Name *</label><input id="clientName" required placeholder="Client or business name"></div>
+            <div class="field"><label>Phone</label><input id="clientPhone" placeholder="Phone number"></div>
+            <div class="field"><label>Service</label><select id="clientService"><option>Social Media Management</option><option>Reels Editing</option><option>Videography</option><option>Photography</option><option>Digital Marketing</option><option>Website Development</option><option>Other</option></select></div>
+            <div class="field"><label>Project Value (Rs.)</label><input id="clientValue" type="number" min="0" value="0"></div>
+            <div class="field"><label>Status</label><select id="clientStatus"><option>In Progress</option><option>Pending</option><option>Completed</option><option>Cancelled</option></select></div>
+            <div class="field"><label>Due Date</label><input id="clientDue" type="date"></div>
+          </div>
+          <button type="submit" id="clientSubmit">Save Client</button>
+          <button type="button" class="btn-secondary" onclick="resetClientForm()">Clear</button>
+        </form>
+      </div>
+      <div class="panel">
+        <h3>Client List</h3>
+        <input id="clientSearch" placeholder="Search clients..." style="max-width:350px;margin-bottom:14px">
+        <div class="table-wrap"><table>
+          <thead><tr><th>Client</th><th>Service</th><th>Value</th><th>Status</th><th>Due Date</th><th>Actions</th></tr></thead>
+          <tbody id="clientTable"></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- TEAM -->
+    <section class="page" id="team">
+      <div class="page-heading"><div><h2>Team Management</h2><p>Manage employees and assign tasks.</p></div></div>
+      <div class="panel">
+        <h3>Add Employee</h3>
+        <form id="employeeForm">
+          <div class="form-grid">
+            <div class="field"><label>Employee Name *</label><input id="employeeName" required placeholder="Full name"></div>
+            <div class="field"><label>Position</label><input id="employeeRole" placeholder="Video Editor, Manager..."></div>
+            <div class="field"><label>Phone</label><input id="employeePhone" placeholder="Phone number"></div>
+          </div>
+          <button type="submit">Add Employee</button>
+        </form>
+      </div>
+      <div class="panel">
+        <h3>Employees</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Name</th><th>Position</th><th>Phone</th><th>Actions</th></tr></thead>
+          <tbody id="employeeTable"></tbody>
+        </table></div>
+      </div>
+      <div class="panel">
+        <h3>Assign Task</h3>
+        <form id="taskForm">
+          <div class="form-grid">
+            <div class="field"><label>Task Name *</label><input id="taskName" required placeholder="Edit a Reel, design a post..."></div>
+            <div class="field"><label>Assign Employee</label><select id="taskEmployee"></select></div>
+            <div class="field"><label>Due Date</label><input id="taskDue" type="date"></div>
+            <div class="field"><label>Status</label><select id="taskStatus"><option>Pending</option><option>In Progress</option><option>Completed</option></select></div>
+          </div>
+          <button type="submit">Assign Task</button>
+        </form>
+      </div>
+      <div class="panel">
+        <h3>Task List</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Task</th><th>Employee</th><th>Due Date</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="taskTable"></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- FINANCE -->
+    <section class="page" id="finance">
+      <div class="page-heading"><div><h2>Finance Management</h2><p>Keep track of your income, expenses and balance.</p></div></div>
+      <div class="cards">
+        <div class="stat"><small>Total Income</small><h2 id="financeIncome">Rs. 0</h2></div>
+        <div class="stat"><small>Total Expenses</small><h2 id="financeExpense">Rs. 0</h2></div>
+        <div class="stat"><small>Net Balance</small><h2 id="financeBalance">Rs. 0</h2></div>
+        <div class="stat"><small>Transactions</small><h2 id="transactionCount">0</h2></div>
+      </div>
+      <div class="panel">
+        <h3>Add Transaction</h3>
+        <form id="financeForm">
+          <div class="form-grid">
+            <div class="field"><label>Transaction Type</label><select id="financeType"><option>Income</option><option>Expense</option></select></div>
+            <div class="field"><label>Amount (Rs.) *</label><input id="financeAmount" type="number" min="0.01" step="0.01" required></div>
+            <div class="field"><label>Category</label><input id="financeCategory" required placeholder="Client payment, salary, rent..."></div>
+            <div class="field"><label>Date *</label><input id="financeDate" type="date" required></div>
+            <div class="field"><label>Notes</label><input id="financeNotes" placeholder="Optional details"></div>
+          </div>
+          <button type="submit">Save Transaction</button>
+        </form>
+      </div>
+      <div class="panel">
+        <h3>Transaction History</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Date</th><th>Type</th><th>Category</th><th>Amount</th><th>Notes</th><th>Actions</th></tr></thead>
+          <tbody id="financeTable"></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- PLANNER -->
+    <section class="page" id="planner">
+      <div class="page-heading"><div><h2>CEO Planner</h2><p>Set your goals and track your progress.</p></div></div>
+      <div class="panel">
+        <h3>Add Goal / Plan</h3>
+        <form id="goalForm">
+          <div class="form-grid">
+            <div class="field"><label>Goal *</label><input id="goalName" required placeholder="Example: Get 5 new clients"></div>
+            <div class="field"><label>Deadline</label><input id="goalDate" type="date"></div>
+            <div class="field"><label>Priority</label><select id="goalPriority"><option>High</option><option>Medium</option><option>Low</option></select></div>
+          </div>
+          <button type="submit">Add Goal</button>
+        </form>
+      </div>
+      <div class="panel">
+        <h3>Goals & Progress</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Goal</th><th>Deadline</th><th>Priority</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="goalTable"></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- DAILY RECORDS -->
+    <section class="page" id="records">
+      <div class="page-heading"><div><h2>Daily Records</h2><p>Keep a date-wise history of business activities.</p></div></div>
+      <div class="panel">
+        <h3>Add Daily Record</h3>
+        <form id="recordForm">
+          <div class="form-grid">
+            <div class="field"><label>Date *</label><input id="recordDate" type="date" required></div>
+            <div class="field"><label>Activity *</label><input id="recordActivity" required placeholder="Client meeting, video shoot..."></div>
+            <div class="field"><label>Category</label><select id="recordCategory"><option>Business</option><option>Client Work</option><option>Team</option><option>Finance</option><option>Marketing</option><option>Personal Goal</option></select></div>
+            <div class="field" style="grid-column:span 2"><label>Notes</label><textarea id="recordNotes" placeholder="Write today's progress..."></textarea></div>
+          </div>
+          <button type="submit">Save Daily Record</button>
+        </form>
+      </div>
+      <div class="panel">
+        <h3>Record History</h3>
+        <div class="form-grid">
+          <div class="field"><label>Filter by date</label><input id="recordFilter" type="date"></div>
+          <div class="field"><label>Search records</label><input id="recordSearch" placeholder="Search activity or notes"></div>
+          <div class="field" style="justify-content:end"><button class="btn-secondary" onclick="clearRecordFilters()" type="button">Clear Filters</button></div>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Date</th><th>Activity</th><th>Category</th><th>Notes</th><th>Actions</th></tr></thead>
+          <tbody id="recordTable"></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <div class="footer">© <span id="year"></span> The Content House · CEO Management Dashboard</div>
+  </div>
 </main>
-
-<footer>© 2026 The Content House | Employee Management System</footer>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
 <script>
-const $ = id => document.getElementById(id);
+// Data is saved in this browser using localStorage.
+const STORAGE_KEY = "contentHouseCEO_v1";
 
-const defaultTeam = [
-  {name:"Suvash BK",role:"Content Creator",task:"Create social media content",status:"Pending",attendance:"Not Marked"},
-  {name:"Sundar Kafle",role:"Video Editor",task:"Edit client Reels",status:"Pending",attendance:"Not Marked"},
-  {name:"Aapradhi Kanor",role:"Social Media Manager",task:"Plan social media posts",status:"Pending",attendance:"Not Marked"},
-  {name:"Gentrang Gurung",role:"Videographer",task:"Shoot client videos",status:"Pending",attendance:"Not Marked"},
-  {name:"Employee 05",role:"Team Member",task:"Assign a task",status:"Pending",attendance:"Not Marked"}
-];
-
-const HISTORY_KEY = "contentHouseDailyHistory";
-const OLD_KEY = "contentHouseEmployees";
-
-function dateKey(date = new Date()){
-  const y = date.getFullYear();
-  const m = String(date.getMonth()+1).padStart(2,"0");
-  const d = String(date.getDate()).padStart(2,"0");
-  return `${y}-${m}-${d}`;
-}
-
-function clone(data){
-  return JSON.parse(JSON.stringify(data));
-}
-
-let history = {};
-
-try {
-  const saved = JSON.parse(localStorage.getItem(HISTORY_KEY) || "{}");
-  if(saved && typeof saved === "object" && !Array.isArray(saved)){
-    history = saved;
-  }
-} catch(e) {
-  history = {};
-}
-
-// Migrate previously saved employee data.
-try {
-  const old = localStorage.getItem(OLD_KEY);
-  const todayKey = dateKey();
-
-  if(old && !history[todayKey]){
-    const parsed = JSON.parse(old);
-    if(Array.isArray(parsed)) history[todayKey] = parsed;
-  }
-} catch(e) {
-  console.warn("Old data could not be migrated.",e);
-}
-
-function newDay(previous){
-  return previous.map(e => ({
-    ...e,
-    task:"Assign a task",
-    status:"Pending",
-    attendance:"Not Marked"
-  }));
-}
-
-function loadTeam(date){
-  if(Array.isArray(history[date])) return clone(history[date]);
-
-  const earlier = Object.keys(history)
-    .filter(d => d < date && Array.isArray(history[d]))
-    .sort();
-
-  if(earlier.length){
-    return newDay(history[earlier[earlier.length-1]]);
-  }
-
-  return clone(defaultTeam);
-}
-
-$("today").textContent = new Date().toLocaleDateString("en-NP",{
-  day:"numeric",month:"short",year:"numeric"
-});
-
-$("historyDate").value = dateKey();
-
-let team = loadTeam($("historyDate").value);
-let readOnly = false;
-
-function persistData(){
-  if(readOnly) return;
-
-  history[$("historyDate").value] = clone(team);
-
-  try {
-    localStorage.setItem(HISTORY_KEY,JSON.stringify(history));
-    localStorage.setItem(OLD_KEY,JSON.stringify(team));
-    $("historyMessage").textContent =
-      "Saved successfully for " + $("historyDate").value;
-  } catch(e) {
-    $("historyMessage").textContent =
-      "Saving failed. Browser storage may be full.";
-    console.error(e);
-  }
-}
-
-function cell(row,element){
-  const td = document.createElement("td");
-  td.appendChild(element);
-  row.appendChild(td);
-}
-
-function makeInput(value,label,update){
-  const el = document.createElement("input");
-  el.value = value || "";
-  el.setAttribute("aria-label",label);
-  el.disabled = readOnly;
-
-  el.addEventListener("change",()=>{
-    update(el.value);
-    persistData();
-    render();
-  });
-
-  return el;
-}
-
-function makeSelect(options,value,label,update){
-  const el = document.createElement("select");
-  el.setAttribute("aria-label",label);
-  el.disabled = readOnly;
-
-  options.forEach(option=>{
-    const opt = document.createElement("option");
-    opt.value = option;
-    opt.textContent = option;
-    opt.selected = option === value;
-    el.appendChild(opt);
-  });
-
-  el.addEventListener("change",()=>{
-    update(el.value);
-    persistData();
-    render();
-  });
-
-  return el;
-}
-
-function render(){
-  const query = $("search").value.toLowerCase();
-  $("employees").replaceChildren();
-
-  team.forEach((e,i)=>{
-    if(!((e.name+" "+e.role+" "+e.task).toLowerCase().includes(query))) return;
-
-    const tr = document.createElement("tr");
-
-    cell(tr,makeInput(e.name,"Employee name",v=>e.name=v));
-    cell(tr,makeInput(e.role,"Employee role",v=>e.role=v));
-    cell(tr,makeInput(e.task,"Employee task",v=>e.task=v));
-
-    cell(tr,makeSelect(
-      ["Pending","In Progress","Completed"],
-      e.status,"Task status",v=>e.status=v
-    ));
-
-    cell(tr,makeSelect(
-      ["Not Marked","Present","Absent","Leave"],
-      e.attendance,"Attendance",v=>e.attendance=v
-    ));
-
-    const btn = document.createElement("button");
-    btn.textContent = "Remove";
-    btn.disabled = readOnly;
-
-    btn.onclick = ()=>{
-      if(confirm("Remove "+e.name+" from this date?")){
-        team.splice(i,1);
-        persistData();
-        render();
-      }
-    };
-
-    cell(tr,btn);
-    $("employees").appendChild(tr);
-  });
-
-  $("total").textContent = team.length;
-  $("completed").textContent = team.filter(e=>e.status==="Completed").length;
-  $("progress").textContent = team.filter(e=>e.status==="In Progress").length;
-  $("pending").textContent = team.filter(e=>e.status==="Pending").length;
-
-  $("addEmployee").disabled = readOnly;
-  $("assignTask").disabled = readOnly;
-
-  persistData();
-}
-
-function changeDate(date){
-  if(!date) return;
-
-  $("historyDate").value = date;
-  const exists = Array.isArray(history[date]);
-
-  team = loadTeam(date);
-  readOnly = date < dateKey();
-
-  if(exists){
-    $("historyMessage").textContent = readOnly
-      ? "Viewing past records (read-only): " + date
-      : "Viewing saved records for " + date;
-  } else {
-    $("historyMessage").textContent = readOnly
-      ? "No saved records for this past date: " + date
-      : "New daily record: " + date;
-  }
-
-  render();
-}
-
-$("historyDate").addEventListener("change",()=>{
-  changeDate($("historyDate").value);
-});
-
-$("todayButton").onclick = ()=>{
-  changeDate(dateKey());
+const defaultData = {
+  clients: [],
+  employees: [],
+  tasks: [],
+  transactions: [],
+  goals: [],
+  records: []
 };
 
-$("addEmployee").onclick = ()=>{
-  if(readOnly) return;
+let data = loadData();
+let editingClientId = null;
 
-  const name = prompt("Enter employee name:");
-  if(!name || !name.trim()) return;
-
-  team.push({
-    name:name.trim(),
-    role:"Team Member",
-    task:"Assign a task",
-    status:"Pending",
-    attendance:"Not Marked"
-  });
-
-  persistData();
-  render();
-};
-
-$("assignTask").onclick = ()=>{
-  if(readOnly) return;
-
-  if(!team.length){
-    alert("Add an employee first.");
-    return;
+function loadData(){
+  try{
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if(saved && typeof saved === "object"){
+      return {...defaultData,...saved};
+    }
+  }catch(error){
+    console.error("Could not load saved data:", error);
   }
+  return structuredClone(defaultData);
+}
 
-  const task = prompt("Enter task description:");
-  if(!task || !task.trim()) return;
-
-  const answer = prompt(
-    team.map((e,i)=>(i+1)+". "+e.name).join("\n")+
-    "\nEnter employee number:"
-  );
-
-  if(answer===null || answer.trim()==="") return;
-
-  const i = Number(answer)-1;
-
-  if(!Number.isInteger(i)||i<0||i>=team.length){
-    alert("Invalid employee number.");
-    return;
-  }
-
-  team[i].task = task.trim();
-  team[i].status = "Pending";
-
-  persistData();
-  render();
-};
-
-$("search").addEventListener("input",render);
-
-$("export").onclick = ()=>{
-  const rows = [
-    ["Date","Employee","Role","Task","Status","Attendance"],
-    ...team.map(e=>[
-      $("historyDate").value,e.name,e.role,e.task,e.status,e.attendance
-    ])
-  ];
-
-  const csv = "\uFEFF"+rows.map(row=>
-    row.map(v=>'"'+String(v ?? "").replace(/"/g,'""')+'"').join(",")
-  ).join("\r\n");
-
-  const blob = new Blob([csv],{type:"text/csv;charset=utf-8;"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-
-  a.href = url;
-  a.download = "content-house-"+$("historyDate").value+".csv";
-  a.click();
-
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
-};
-
-$("saveImage").onclick = async ()=>{
-  const button = $("saveImage");
-
-  if(typeof html2canvas === "undefined"){
-    alert("Image library unavailable. Check your internet connection.");
-    return;
-  }
-
-  button.disabled = true;
-  button.textContent = "Creating Image...";
-
-  try {
-    const canvas = await html2canvas($("dashboard"),{
-      scale:2,
-      backgroundColor:"#f1f5f9",
-      logging:false,
-      windowWidth:Math.max(
-        document.documentElement.clientWidth,
-        $("dashboard").scrollWidth
-      ),
-      onclone:doc=>{
-        const dashboard = doc.getElementById("dashboard");
-        dashboard.style.width = "1200px";
-        dashboard.style.maxWidth = "none";
-
-        doc.querySelectorAll(".table-wrap").forEach(el=>{
-          el.style.overflow = "visible";
-        });
-
-        doc.querySelectorAll(".actions").forEach(el=>{
-          el.querySelectorAll("input,button,label").forEach(item=>{
-            item.style.display = "none";
-          });
-        });
-
-        doc.querySelectorAll("td input,td select").forEach(el=>{
-          const span = doc.createElement("span");
-          span.textContent = el.value;
-          el.parentNode.replaceChild(span,el);
-        });
-
-        doc.querySelectorAll("td button").forEach(el=>el.remove());
-      }
-    });
-
-    const blob = await new Promise(resolve=>
-      canvas.toBlob(resolve,"image/png")
-    );
-
-    if(!blob) throw new Error("Image creation failed");
-
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "Content-House-"+$("historyDate").value+".png";
-    a.click();
-
-    setTimeout(()=>URL.revokeObjectURL(url),2000);
-  } catch(error) {
+function saveData(){
+  try{
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+    renderAll();
+  }catch(error){
+    alert("Could not save data. Your browser storage may be full or disabled.");
     console.error(error);
-    alert("Could not create image. Please try again.");
-  } finally {
-    button.disabled = false;
-    button.textContent = "Save as Image";
   }
-};
-
-// Create today's record on first launch if no data exists.
-if(!history[$("historyDate").value]){
-  history[$("historyDate").value] = clone(team);
 }
-render();
+
+function uid(){
+  return Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+}
+
+function el(id){return document.getElementById(id)}
+function value(id){return el(id).value.trim()}
+function money(n){
+  return "Rs. " + Number(n || 0).toLocaleString("en-IN",{maximumFractionDigits:2});
+}
+function safe(s){
+  return String(s ?? "").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[c]);
+}
+function today(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+function badge(status){
+  const cls = status === "Completed" ? "done" :
+    status === "Pending" ? "pending" : "";
+  return `<span class="badge ${cls}">${safe(status)}</span>`;
+}
+function emptyRow(cols,message="No records yet"){
+  return `<tr><td colspan="${cols}" class="empty">${message}</td></tr>`;
+}
+
+// Navigation
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
+  el(id).classList.add("active");
+  const titles={
+    overview:"CEO Dashboard",clients:"Clients & Projects",
+    team:"Team Management",finance:"Finance Management",
+    planner:"CEO Planner",records:"Daily Records"
+  };
+  el("pageTitle").textContent=titles[id] || "Dashboard";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll(".nav-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>showPage(btn.dataset.page));
+});
+
+// CLIENTS
+el("clientForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const client={
+    id:editingClientId || uid(),
+    name:value("clientName"),
+    phone:value("clientPhone"),
+    service:el("clientService").value,
+    value:Number(el("clientValue").value)||0,
+    status:el("clientStatus").value,
+    due:el("clientDue").value
+  };
+  if(editingClientId){
+    data.clients=data.clients.map(c=>c.id===editingClientId?client:c);
+  }else{
+    data.clients.push(client);
+  }
+  resetClientForm();
+  saveData();
+});
+
+function resetClientForm(){
+  el("clientForm").reset();
+  el("clientValue").value=0;
+  editingClientId=null;
+  el("clientSubmit").textContent="Save Client";
+}
+function editClient(id){
+  const c=data.clients.find(x=>x.id===id);
+  if(!c)return;
+  editingClientId=id;
+  el("clientName").value=c.name;
+  el("clientPhone").value=c.phone;
+  el("clientService").value=c.service;
+  el("clientValue").value=c.value;
+  el("clientStatus").value=c.status;
+  el("clientDue").value=c.due;
+  el("clientSubmit").textContent="Update Client";
+  showPage("clients");
+  el("clientName").focus();
+}
+function deleteClient(id){
+  if(!confirm("Delete this client?"))return;
+  data.clients=data.clients.filter(c=>c.id!==id);
+  saveData();
+}
+el("clientSearch").addEventListener("input",renderClients);
+
+function renderClients(){
+  const q=value("clientSearch").toLowerCase();
+  const list=data.clients.filter(c=>
+    [c.name,c.phone,c.service,c.status].join(" ").toLowerCase().includes(q)
+  );
+  el("clientTable").innerHTML=list.length?list.map(c=>`
+    <tr>
+      <td><strong>${safe(c.name)}</strong><br><small>${safe(c.phone)}</small></td>
+      <td>${safe(c.service)}</td>
+      <td>${money(c.value)}</td>
+      <td>${badge(c.status)}</td>
+      <td>${safe(c.due || "—")}</td>
+      <td><button onclick="editClient('${c.id}')">Edit</button><button class="btn-danger" onclick="deleteClient('${c.id}')">Delete</button></td>
+    </tr>`).join(""):emptyRow(6,"No matching clients");
+}
+
+// EMPLOYEES
+el("employeeForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  data.employees.push({
+    id:uid(),name:value("employeeName"),
+    role:value("employeeRole"),phone:value("employeePhone")
+  });
+  el("employeeForm").reset();
+  saveData();
+});
+function deleteEmployee(id){
+  if(!confirm("Delete this employee? Assigned tasks will remain."))return;
+  data.employees=data.employees.filter(x=>x.id!==id);
+  saveData();
+}
+function renderEmployees(){
+  el("employeeTable").innerHTML=data.employees.length?data.employees.map(x=>`
+    <tr><td>${safe(x.name)}</td><td>${safe(x.role||"—")}</td><td>${safe(x.phone||"—")}</td>
+    <td><button class="btn-danger" onclick="deleteEmployee('${x.id}')">Delete</button></td></tr>
+  `).join(""):emptyRow(4,"Add your first employee");
+
+  el("taskEmployee").innerHTML='<option value="">Unassigned</option>'+
+    data.employees.map(x=>`<option value="${x.id}">${safe(x.name)}</option>`).join("");
+}
+
+// TASKS
+el("taskForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  data.tasks.push({
+    id:uid(),name:value("taskName"),
+    employeeId:el("taskEmployee").value,
+    due:el("taskDue").value,status:el("taskStatus").value
+  });
+  el("taskForm").reset();
+  saveData();
+});
+function updateTask(id){
+  const t=data.tasks.find(x=>x.id===id);
+  if(!t)return;
+  const statuses=["Pending","In Progress","Completed"];
+  const next=(statuses.indexOf(t.status)+1)%statuses.length;
+  t.status=statuses[next];
+  saveData();
+}
+function deleteTask(id){
+  if(!confirm("Delete this task?"))return;
+  data.tasks=data.tasks.filter(t=>t.id!==id);
+  saveData();
+}
+function renderTasks(){
+  el("taskTable").innerHTML=data.tasks.length?data.tasks.map(t=>{
+    const emp=data.employees.find(x=>x.id===t.employeeId);
+    return `<tr><td>${safe(t.name)}</td><td>${safe(emp?emp.name:"Unassigned")}</td>
+      <td>${safe(t.due||"—")}</td><td>${badge(t.status)}</td>
+      <td><button onclick="updateTask('${t.id}')">Next Status</button><button class="btn-danger" onclick="deleteTask('${t.id}')">Delete</button></td></tr>`;
+  }).join(""):emptyRow(5,"No tasks assigned");
+}
+
+// FINANCE
+el("financeForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const amount=Number(el("financeAmount").value);
+  if(!Number.isFinite(amount)||amount<=0){
+    alert("Enter an amount greater than zero.");return;
+  }
+  data.transactions.push({
+    id:uid(),type:el("financeType").value,
+    amount,category:value("financeCategory"),
+    date:el("financeDate").value,notes:value("financeNotes")
+  });
+  el("financeForm").reset();
+  el("financeDate").value=today();
+  saveData();
+});
+function deleteTransaction(id){
+  if(!confirm("Delete this transaction?"))return;
+  data.transactions=data.transactions.filter(t=>t.id!==id);
+  saveData();
+}
+function renderFinance(){
+  const income=data.transactions.filter(t=>t.type==="Income").reduce((s,t)=>s+t.amount,0);
+  const expenses=data.transactions.filter(t=>t.type==="Expense").reduce((s,t)=>s+t.amount,0);
+  el("financeIncome").textContent=money(income);
+  el("financeExpense").textContent=money(expenses);
+  el("financeBalance").textContent=money(income-expenses);
+  el("transactionCount").textContent=data.transactions.length;
+  el("financeTable").innerHTML=data.transactions.length?[...data.transactions]
+    .sort((a,b)=>b.date.localeCompare(a.date)).map(t=>`
+      <tr><td>${safe(t.date)}</td><td>${badge(t.type)}</td><td>${safe(t.category)}</td>
+      <td>${money(t.amount)}</td><td>${safe(t.notes||"—")}</td>
+      <td><button class="btn-danger" onclick="deleteTransaction('${t.id}')">Delete</button></td></tr>
+    `).join(""):emptyRow(6,"No transactions recorded");
+}
+
+// GOALS
+el("goalForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  data.goals.push({
+    id:uid(),name:value("goalName"),
+    date:el("goalDate").value,
+    priority:el("goalPriority").value,
+    status:"In Progress"
+  });
+  el("goalForm").reset();
+  saveData();
+});
+function updateGoal(id){
+  const g=data.goals.find(x=>x.id===id);
+  if(!g)return;
+  g.status=g.status==="Completed"?"In Progress":"Completed";
+  saveData();
+}
+function deleteGoal(id){
+  if(!confirm("Delete this goal?"))return;
+  data.goals=data.goals.filter(g=>g.id!==id);
+  saveData();
+}
+function renderGoals(){
+  el("goalTable").innerHTML=data.goals.length?data.goals.map(g=>`
+    <tr><td>${safe(g.name)}</td><td>${safe(g.date||"—")}</td>
+    <td>${safe(g.priority)}</td><td>${badge(g.status)}</td>
+    <td><button onclick="updateGoal('${g.id}')">Toggle Status</button><button class="btn-danger" onclick="deleteGoal('${g.id}')">Delete</button></td></tr>
+  `).join(""):emptyRow(5,"No goals added");
+}
+
+// DAILY RECORDS
+el("recordForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  data.records.push({
+    id:uid(),date:el("recordDate").value,
+    activity:value("recordActivity"),
+    category:el("recordCategory").value,
+    notes:value("recordNotes")
+  });
+  el("recordForm").reset();
+  el("recordDate").value=today();
+  saveData();
+});
+function deleteRecord(id){
+  if(!confirm("Delete this record?"))return;
+  data.records=data.records.filter(r=>r.id!==id);
+  saveData();
+}
+el("recordFilter").addEventListener("change",renderRecords);
+el("recordSearch").addEventListener("input",renderRecords);
+
+function clearRecordFilters(){
+  el("recordFilter").value="";
+  el("recordSearch").value="";
+  renderRecords();
+}
+function renderRecords(){
+  const date=el("recordFilter").value;
+  const q=value("recordSearch").toLowerCase();
+  const list=[...data.records].filter(r=>
+    (!date||r.date===date)&&
+    [r.activity,r.category,r.notes].join(" ").toLowerCase().includes(q)
+  ).sort((a,b)=>b.date.localeCompare(a.date));
+
+  el("recordTable").innerHTML=list.length?list.map(r=>`
+    <tr><td>${safe(r.date)}</td><td>${safe(r.activity)}</td>
+    <td>${safe(r.category)}</td><td>${safe(r.notes||"—")}</td>
+    <td><button class="btn-danger" onclick="deleteRecord('${r.id}')">Delete</button></td></tr>
+  `).join(""):emptyRow(5,"No records found");
+
+  const recent=[...data.records].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);
+  el("recentRecords").innerHTML=recent.length?recent.map(r=>`
+    <tr><td>${safe(r.date)}</td><td>${safe(r.activity)}</td><td>${safe(r.notes||"—")}</td></tr>
+  `).join(""):emptyRow(3,"No daily records yet");
+}
+
+// OVERVIEW AND REFRESH
+function renderOverview(){
+  const income=data.transactions.filter(t=>t.type==="Income").reduce((s,t)=>s+t.amount,0);
+  const expenses=data.transactions.filter(t=>t.type==="Expense").reduce((s,t)=>s+t.amount,0);
+  const active=data.clients.filter(c=>c.status==="In Progress").length;
+  const completed=data.clients.filter(c=>c.status==="Completed").length;
+  el("totalClients").textContent=data.clients.length;
+  el("totalTeam").textContent=data.employees.length;
+  el("totalIncome").textContent=money(income);
+  el("netBalance").textContent=money(income-expenses);
+  el("activeProjects").textContent=active;
+  el("completedProjects").textContent=completed;
+  el("pendingTasks").textContent=data.tasks.filter(t=>t.status!=="Completed").length;
+  el("doneTasks").textContent=data.tasks.filter(t=>t.status==="Completed").length;
+  const total=active+completed;
+  el("projectProgress").style.width=(total?completed/total*100:0)+"%";
+}
+
+function renderAll(){
+  renderOverview();
+  renderClients();
+  renderEmployees();
+  renderTasks();
+  renderFinance();
+  renderGoals();
+  renderRecords();
+}
+
+// Export data as a JSON backup file.
+function exportData(){
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="The_Content_House_Backup_"+today()+".json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+// Initialize dashboard
+el("todayText").textContent=new Date().toLocaleDateString(undefined,{
+  weekday:"long",year:"numeric",month:"long",day:"numeric"
+});
+el("year").textContent=new Date().getFullYear();
+el("financeDate").value=today();
+el("recordDate").value=today();
+renderAll();
 </script>
 </body>
 </html>
